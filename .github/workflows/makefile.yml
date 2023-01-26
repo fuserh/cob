@@ -1,0 +1,33 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: configure
+      run: sudo apt-get install git-core gitk git-gui subversion curl lvm2 thin-provisioning-tools python-pkg-resources python-virtualenv python-oauth2client
+
+    - name: make setup
+      run: make setup
+
+    - name: make images
+      run: make images
+
+    - name: make
+      run: make x64
+    - name: Upload artifact # 上传构建产物，这里我们的源码目录是 src，而实际运行的代码是构建后的 bin 目录
+      uses: actions/upload-artifact@v2
+      with:
+          name: build_output
+          path: .
+
